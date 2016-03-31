@@ -49,14 +49,24 @@ def init_logger(filename_base, have_console=True):
     logger.addHandler(debug)
 
 
-def main():
+def main(args):
     init_logger("train")
     conf = load_conf(DEFAULT_CONF_FILE)
 
     loco = Locomotive()
     loco.connect(**conf["db"])
 
+    if len(args) < 2:
+        logging.error("No argument found")
+        return
+
+    action = args[0].lower()
+    if "count" == action:
+        table_name = args[1]
+        count = loco.get_table_rows(table_name)
+        logging.info("Rows of '%s': %s", table_name, count)
+
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
 
