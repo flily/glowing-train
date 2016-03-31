@@ -36,8 +36,14 @@ class Locomotive(object):
         rows_num = self.get_table_rows(table_name)
         offset = 0
 
+        if rows_num is None:
+            logging.error("Table '%s' not found", table_name)
+            return
+
         while offset < rows_num:
             result = self.select_table_range(table_name, offset, count)
             for x in result:
-                print list(x)
+                logging.info("%s", x)
+
+            offset += len(result)
 
