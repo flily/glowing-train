@@ -68,6 +68,12 @@ def main(args):
         else:
             logging.info("Rows of '%s': %s", table_name, count)
 
+    elif "list" == action:
+        table_name = args[1]
+        count = int(args[2])
+
+        loco.dump_table(table_name, count)
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
