@@ -70,9 +70,11 @@ def main(args):
 
     elif "list" == action:
         table_name = args[1]
-        count = int(args[2])
+        each_count = 1000
+        if len(args) > 2:
+            each_count = int(args[2])
 
-        loco.dump_table(table_name, count)
+        loco.dump_table(table_name, each_count)
 
 
 if __name__ == "__main__":

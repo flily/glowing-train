@@ -33,7 +33,7 @@ class Locomotive(object):
         return self.cursor.fetchall()
 
     def dump_table(self, table_name, count):
-        rows_num = self.get_table_rows()
+        rows_num = self.get_table_rows(table_name)
         offset = 0
 
         while offset < rows_num:
