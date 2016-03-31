@@ -53,8 +53,7 @@ def main(args):
     init_logger("train")
     conf = load_conf(DEFAULT_CONF_FILE)
 
-    loco = Locomotive()
-    loco.connect(**conf["db"])
+    loco = Locomotive(**conf["db"])
 
     if len(args) < 2:
         logging.error("No argument found")
