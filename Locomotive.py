@@ -18,4 +18,4 @@ class Locomotive(object):
     def get_table_rows(self, table_name):
         sql = "SELECT COUNT(*) FROM %s" % table_name
         self.cursor.execute(sql)
-        return self.cursor.fetchall()[0]
+        return self.cursor.fetchall()[0][0]
