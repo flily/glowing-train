@@ -63,7 +63,10 @@ def main(args):
     if "count" == action:
         table_name = args[1]
         count = loco.get_table_rows(table_name)
-        logging.info("Rows of '%s': %s", table_name, count)
+        if count is None:
+            logging.info("Table '%s' not found or broken", table_name)
+        else:
+            logging.info("Rows of '%s': %s", table_name, count)
 
 
 if __name__ == "__main__":

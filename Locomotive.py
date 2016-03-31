@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 
+import logging
 import MySQLdb
 
 
@@ -16,6 +17,11 @@ class Locomotive(object):
         self.cursor = self.mysql.cursor()
 
     def get_table_rows(self, table_name):
-        sql = "SELECT COUNT(*) FROM %s" % table_name
-        self.cursor.execute(sql)
-        return self.cursor.fetchall()[0][0]
+        try:
+            sql = "SELECT COUNT(*) FROM %s" % table_name
+            self.cursor.execute(sql)
+            return self.cursor.fetchall()[0][0]
+
+        except MySQLdb.ProgrammingError as ex:
+            logging.debug("Programming Error: %s", ex)
+            return None
