@@ -25,3 +25,19 @@ class Locomotive(object):
         except MySQLdb.ProgrammingError as ex:
             logging.debug("Programming Error: %s", ex)
             return None
+
+    def select_table_range(self, table_name, offset, count):
+        sql = "SELECT * FROM `%s` LIMIT %s, %s" % (table_name, offset, count)
+
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
+    def dump_table(self, table_name, count):
+        rows_num = self.get_table_rows()
+        offset = 0
+
+        while offset < rows_num:
+            result = self.select_table_range(table_name, offset, count)
+            for x in result:
+                print list(x)
+
