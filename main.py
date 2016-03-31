@@ -76,6 +76,9 @@ def main(args):
 
         loco.dump_table(table_name, each_count)
 
+    elif "conf" == action:
+        logging.info("Configure: %s", conf)
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

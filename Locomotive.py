@@ -43,7 +43,7 @@ class Locomotive(object):
         while offset < rows_num:
             result = self.select_table_range(table_name, offset, count)
             for x in result:
-                logging.info("%s", x)
+                logging.info("%s", list[x])
 
             offset += len(result)
 
