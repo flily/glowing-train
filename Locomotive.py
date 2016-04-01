@@ -57,6 +57,7 @@ class Locomotive(object):
     def dump_table(self, filename, table_name, count):
         rows_num = self.get_table_rows(table_name)
         offset = 0
+        dump_count = 0
 
         if rows_num is None:
             logging.error("Table '%s' not found", table_name)
@@ -73,15 +74,21 @@ class Locomotive(object):
             while offset < rows_num:
                 result = self.select_table_range(table_name, offset, count)
                 for row in result:
-                    email = row[column_map[email_key]]
-                    password = row[column_map[password_key]]
-                    logging.debug("%s  %s %s", list(row), email, password)
+                    try:
+                        email = row[column_map[email_key]]
+                        password = row[column_map[password_key]]
+                        logging.debug("%s  %s %s", list(row), email, password)
 
-                    content = hascrpt.hash_info(hash_method,
-                                                email=email, password=password)
-                    logging.debug("Content: %s", content)
-                    fp.write(json.dumps(content) + "\n")
+                        content = hascrpt.hash_info(hash_method,
+                                                    email=email, password=password)
+                        logging.debug("Content: %s", content)
+                        fp.write(json.dumps(content) + "\n")
+                        dump_count += 1
+
+                    except Exception as ex:
+                        logging.error("ERROR FOR DATA: %s", ex)
+                        logging.error("ERROR DATA: %s", row)
 
                 offset += len(result)
-                logging.info("%s records dump", offset)
+                logging.info("%s of %s/%s records dump",dump_count, offset, rows_num)
 
