@@ -12,6 +12,14 @@ import hascrpt
 import checker
 
 
+def _email_map_hook(email):
+    return email
+
+
+def _password_map_hook(password):
+    return password
+
+
 class Locomotive(object):
     def __init__(self, *args, **kwargs):
         self.mysql = MySQLdb.connect(*args, **kwargs)
@@ -107,6 +115,9 @@ class Locomotive(object):
                             if not email:
                                 logging.error("ERROR EMAIL: %s", row)
                                 continue
+
+                            email = _email_map_hook(email)
+                            password = _password_map_hook(password)
 
                             logging.debug("%s  %s %s", list(row), email, password)
 
