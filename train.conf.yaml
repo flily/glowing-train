@@ -4,3 +4,9 @@
     port: 3306
     user: root
     db: db
+
+  system:
+    email_key: email
+    password_key: password
+    hash_method: sha1
+ 
