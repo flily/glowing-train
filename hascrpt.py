@@ -24,7 +24,10 @@ def hash_info(method, **kwargs):
         return onetime_hash_hex(method, **kwargs)
 
     elif method == "md5-md5hex":
-        return md5_md5hex_hash(**kwargs)
+        return hash_md5hex_hash("md5", **kwargs)
+
+    elif method == "sha1-md5hex":
+        return hash_md5hex_hash("sha1", **kwargs)
 
     elif method == "plain":
         return raw_dump("plain", **kwargs)
@@ -66,12 +69,18 @@ def onetime_hash_hex(method, email, password, **kwargs):
     }
 
 
-def md5_md5hex_hash(email, password, **kwargs):
-    m = hashlib.new("md5")
+def hash_md5hex_hash(method, email, password, **kwargs):
+    m = hashlib.new(method)
     m.update(password.lower())
     h = m.hexdigest()
 
-    return {"email": email, "password": {"type": "md5-md5hex", "value": h}}
+    return {
+        "email": email,
+        "password": {
+            "type": "%s-md5hex" % method,
+            "value": h,
+        }
+    }
 
 
 def onetime_salt_hash_hex(method, email, password, salt_length=16, **kwargs):
