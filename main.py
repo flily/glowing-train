@@ -74,7 +74,8 @@ def main(args):
         if len(args) > 2:
             each_count = int(args[2])
 
-        loco.dump_table(table_name, each_count)
+        filename = "%s.json" % table_name
+        loco.dump_table(filename, table_name, each_count)
 
     elif "conf" == action:
         logging.info("Configure: %s", conf)
