@@ -143,6 +143,7 @@ class Locomotive(object):
 
         finish_time = datetime.datetime.now()
         total_seconds = (finish_time - start_time).total_seconds()
+        logging.info("TOTAL TIME: %ss", total_seconds)
         logging.info("BENCHMARK: Write %s records/s", dump_count / total_seconds)
         logging.info("BENCHMARK: Process %s records/s", offset / total_seconds)
 
