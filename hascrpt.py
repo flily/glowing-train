@@ -35,6 +35,12 @@ def hash_info(method, **kwargs):
     elif method.startswith("salt-"):
         return onetime_salt_hash_hex(method[5:], **kwargs)
 
+    elif method.startswith("multi-"):
+        parts = method.split("-")
+        hash_method = parts[1]
+        hash_times = int(parts[2])
+        return iterate_hash(hash_method, time=hash_times, **kwargs)
+
 
 def raw_dump(method, email, password, **kwargs):
     return {
@@ -83,3 +89,24 @@ def onetime_salt_hash_hex(method, email, password, salt_length=16, **kwargs):
             "salt": base64.b64encode(salt),
         }
     }
+
+
+def iterate_hash(method, email, password, time, **kwargs):
+    i = 0
+    c = password
+
+    while i < time:
+        m = hashlib.new(method)
+        m.update(c)
+        c = m.hexdigest()
+        i += 1
+
+    return {
+        "email": email,
+        "password": {
+            "type": "multi-%s" % method,
+            "time": time,
+            "value": c,
+        }
+    }
+
