@@ -54,7 +54,7 @@ def main(args):
     conf = load_conf(DEFAULT_CONF_FILE)
 
     loco = Locomotive(**conf["db"])
-    loco.load_sys_conf(**conf["system"])
+    loco.load_sys_conf(conf["system"])
 
     if len(args) < 2:
         logging.error("No argument found")

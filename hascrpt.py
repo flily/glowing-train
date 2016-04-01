@@ -8,6 +8,9 @@ def hash_info(method, **kwargs):
     if method == "md5":
         return md5_hash(**kwargs)
 
+    elif method == "sha1":
+        return sha1_hash(**kwargs)
+
 
 def md5_hash(email, password):
     m = hashlib.new("md5")
