@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 
+import datetime
 import logging
 import json
 import bz2
@@ -84,28 +85,42 @@ class Locomotive(object):
         output_format = self.sys_conf.get("format", "bzip2")
         lower_email_only = self.sys_conf.get("lower_email", "yes") == "yes"
 
+        start_time = datetime.datetime.now()
         with self.open_target_file(filename, output_format) as fp:
-            while offset < rows_num:
-                result = self.select_table_range(table_name, offset, count)
-                for row in result:
-                    try:
-                        email = row[column_map[email_key]]
-                        password = row[column_map[password_key]]
-                        if lower_email_only:
-                            email = email.lower()
+            try:
+                while offset < rows_num:
+                    result = self.select_table_range(table_name, offset, count)
+                    for row in result:
+                        try:
+                            email = row[column_map[email_key]]
+                            password = row[column_map[password_key]]
+                            if lower_email_only:
+                                email = email.lower()
 
-                        logging.debug("%s  %s %s", list(row), email, password)
+                            logging.debug("%s  %s %s", list(row), email, password)
 
-                        content = hascrpt.hash_info(hash_method,
-                                                    email=email, password=password)
-                        logging.debug("Content: %s", content)
-                        fp.write(json.dumps(content) + "\n")
-                        dump_count += 1
+                            content = hascrpt.hash_info(hash_method,
+                                                        email=email, password=password)
+                            logging.debug("Content: %s", content)
+                            fp.write(json.dumps(content) + "\n")
+                            dump_count += 1
 
-                    except Exception as ex:
-                        logging.error("ERROR FOR DATA: %s", ex)
-                        logging.error("ERROR DATA: %s", row)
+                        except Exception as ex:
+                            logging.error("ERROR FOR DATA: %s", ex)
+                            logging.error("ERROR DATA: %s", row)
 
-                offset += len(result)
-                logging.info("%s of %s/%s records dump",dump_count, offset, rows_num)
+                    offset += len(result)
+                    logging.info("%s of %s/%s records dump",dump_count, offset, rows_num)
+
+            except Exception as ex:
+                logging.error("Error: %s", ex)
+
+            except KeyboardInterrupt:
+                logging.error("Stop by user")
+
+        finish_time = datetime.datetime.now()
+        total_seconds = (finish_time - start_time).total_seconds()
+        logging.info("BENCHMARK: Write %s records/s", dump_count / total_seconds)
+        logging.info("BENCHMARK: Process %s records/s", offset / total_seconds)
+
 

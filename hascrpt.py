@@ -15,6 +15,9 @@ def hash_info(method, **kwargs):
     if method == "md5":
         return md5_hash(**kwargs)
 
+    elif method == "md5-md5hex":
+        return md5_md5hex_hash(**kwargs)
+
     elif method == "sha1":
         return sha1_hash(**kwargs)
 
@@ -41,6 +44,14 @@ def md5_hash(email, password):
     h = m.hexdigest()
 
     return {"email": email, "password": {"type": "md5", "value": h}}
+
+
+def md5_md5hex_hash(email, password):
+    m = hashlib.new("md5")
+    m.update(password.lower())
+    h = m.hexdigest()
+
+    return {"email": email, "password": {"type": "md5-md5hex", "value": h}}
 
 
 def sha1_hash(email, password):
