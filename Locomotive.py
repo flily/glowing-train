@@ -84,6 +84,7 @@ class Locomotive(object):
         password_key = self.sys_conf.get("password_key", "password")
         output_format = self.sys_conf.get("format", "bzip2")
         lower_email_only = self.sys_conf.get("lower_email", "yes") == "yes"
+        salt_length = self.sys_conf.get("salt_length", 16)
 
         start_time = datetime.datetime.now()
         with self.open_target_file(filename, output_format) as fp:
@@ -100,7 +101,8 @@ class Locomotive(object):
                             logging.debug("%s  %s %s", list(row), email, password)
 
                             content = hascrpt.hash_info(hash_method,
-                                                        email=email, password=password)
+                                                        email=email, password=password,
+                                                        salt_length=salt_length)
                             logging.debug("Content: %s", content)
                             fp.write(json.dumps(content) + "\n")
                             dump_count += 1
