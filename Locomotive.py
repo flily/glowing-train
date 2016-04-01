@@ -82,6 +82,7 @@ class Locomotive(object):
         email_key = self.sys_conf.get("email_key", "email")
         password_key = self.sys_conf.get("password_key", "password")
         output_format = self.sys_conf.get("format", "bzip2")
+        lower_email_only = self.sys_conf.get("lower_email", "yes") == "yes"
 
         with self.open_target_file(filename, output_format) as fp:
             while offset < rows_num:
@@ -90,6 +91,9 @@ class Locomotive(object):
                     try:
                         email = row[column_map[email_key]]
                         password = row[column_map[password_key]]
+                        if lower_email_only:
+                            email = email.lower()
+
                         logging.debug("%s  %s %s", list(row), email, password)
 
                         content = hascrpt.hash_info(hash_method,
