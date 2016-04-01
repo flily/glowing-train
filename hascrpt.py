@@ -18,6 +18,9 @@ def hash_info(method, **kwargs):
     elif method == "sha1":
         return sha1_hash(**kwargs)
 
+    elif method == "plain":
+        return raw_dump("plain", **kwargs)
+
     elif method.startswith("raw"):
         return raw_dump(method[3:].lower(), **kwargs)
 
