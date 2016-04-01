@@ -31,6 +31,9 @@ class Locomotive(object):
     def load_sys_conf(self, sys_conf):
         self.sys_conf = sys_conf
 
+    def overload_sys_conf(self, name, value):
+        self.sys_conf[name] = value
+
     def get_table_rows(self, table_name):
         try:
             sql = "SELECT COUNT(*) FROM `%s`" % table_name
@@ -68,7 +71,7 @@ class Locomotive(object):
         else:
             return open(filename, "w")
 
-    def dump_table(self, filename, table_name, count):
+    def dump_table(self, filename, table_name):
         rows_num = self.get_table_rows(table_name)
         offset = 0
         dump_count = 0
@@ -80,6 +83,7 @@ class Locomotive(object):
         column_names = self.get_table_columns_name(table_name)
         column_map = dict(zip(column_names, range(0, len(column_names))))
 
+        each_count = self.sys_conf.get("each_count", 2000)
         hash_method = self.sys_conf.get("hash_method", "sha1")
         email_key = self.sys_conf.get("email_key", "email")
         password_key = self.sys_conf.get("password_key", "password")
@@ -91,7 +95,7 @@ class Locomotive(object):
         with self.open_target_file(filename, output_format) as fp:
             try:
                 while offset < rows_num:
-                    result = self.select_table_range(table_name, offset, count)
+                    result = self.select_table_range(table_name, offset, each_count)
                     for row in result:
                         try:
                             email = row[column_map[email_key]]

@@ -71,12 +71,21 @@ def main(args):
 
     elif "list" == action:
         table_name = args[1]
-        each_count = 1000
         if len(args) > 2:
-            each_count = int(args[2])
+            opts = args[2:]
+            for x in opts:
+                name, value = x.split("=")
+                logging.info("SET system conf [%s] <== %s", name, value)
+
+                try:
+                    intval = int(value)
+                    loco.overload_sys_conf(name, intval)
+
+                except ValueError:
+                    loco.overload_sys_conf(name, value)
 
         filename = "%s.json" % table_name
-        loco.dump_table(filename, table_name, each_count)
+        loco.dump_table(filename, table_name)
 
     elif "conf" == action:
         logging.info("Configure: %s", conf)
