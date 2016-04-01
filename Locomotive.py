@@ -3,6 +3,8 @@
 
 import logging
 import json
+import bz2
+import gzip
 import MySQLdb
 
 import hascrpt
@@ -54,6 +56,16 @@ class Locomotive(object):
         self.cursor.execute(sql)
         return self.cursor.fetchall()
 
+    def open_target_file(self, filename, format="plain"):
+        if format in ["gzip", "gz"]:
+            return gzip.open(filename + ".gz", "w")
+
+        elif format in ["bzip2", "bz2"]:
+            return bz2.BZ2File(filename + ".bz2", "w")
+
+        else:
+            return open(filename, "w")
+
     def dump_table(self, filename, table_name, count):
         rows_num = self.get_table_rows(table_name)
         offset = 0
@@ -69,8 +81,9 @@ class Locomotive(object):
         hash_method = self.sys_conf.get("hash_method", "sha1")
         email_key = self.sys_conf.get("email_key", "email")
         password_key = self.sys_conf.get("password_key", "password")
+        output_format = self.sys_conf.get("format", "bzip2")
 
-        with open(filename, "w") as fp:
+        with self.open_target_file(filename, output_format) as fp:
             while offset < rows_num:
                 result = self.select_table_range(table_name, offset, count)
                 for row in result:
