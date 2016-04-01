@@ -9,6 +9,7 @@ import gzip
 import MySQLdb
 
 import hascrpt
+import checker
 
 
 class Locomotive(object):
@@ -97,6 +98,11 @@ class Locomotive(object):
                             password = row[column_map[password_key]]
                             if lower_email_only:
                                 email = email.lower()
+
+                            email = checker.check_email(email)
+                            if not email:
+                                logging.error("ERROR EMAIL: %s", row)
+                                continue
 
                             logging.debug("%s  %s %s", list(row), email, password)
 
