@@ -63,8 +63,13 @@ class Locomotive(object):
             logging.debug("Programming Error: %s", ex)
             return None
 
-    def select_table_range(self, table_name, offset, count):
+    def select_table_range(self, table_name, offset, count, by_id=None):
         sql = "SELECT * FROM `%s` LIMIT %s, %s" % (table_name, offset, count)
+        if by_id:
+            lower_bound = offset
+            upper_bound = offset + count
+            sql = "SELECT * FROM `%s` WHERE `%s` >= %s and `%s` < %s" \
+                  % (table_name, by_id, lower_bound, by_id, upper_bound)
 
         self.cursor.execute(sql)
         return self.cursor.fetchall()
@@ -98,12 +103,15 @@ class Locomotive(object):
         output_format = self.sys_conf.get("format", "bzip2")
         lower_email_only = self.sys_conf.get("lower_email", "yes") == "yes"
         salt_length = self.sys_conf.get("salt_length", 16)
+        by_id_col = self.sys_conf.get("by_id", None)
 
         start_time = datetime.datetime.now()
         with self.open_target_file(filename, output_format) as fp:
             try:
                 while offset < rows_num:
-                    result = self.select_table_range(table_name, offset, each_count)
+                    result = self.select_table_range(table_name,
+                                                     offset, each_count,
+                                                     by_id_col)
                     for row in result:
                         try:
                             email = row[column_map[email_key]]
