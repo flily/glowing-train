@@ -63,9 +63,9 @@ class Locomotive(object):
             logging.debug("Programming Error: %s", ex)
             return None
 
-    def select_table_range(self, table_name, offset, count, by_id=None):
+    def select_table_range(self, table_name, offset, count, by_id="uid"):
         sql = "SELECT * FROM `%s` LIMIT %s, %s" % (table_name, offset, count)
-        if by_id:
+        if by_id and by_id.lower() not in ["null", "none", "nil"]:
             lower_bound = offset
             upper_bound = offset + count
             sql = "SELECT * FROM `%s` WHERE `%s` >= %s and `%s` < %s" \
