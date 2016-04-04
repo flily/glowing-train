@@ -103,7 +103,7 @@ class Locomotive(object):
         output_format = self.sys_conf.get("format", "bzip2")
         lower_email_only = self.sys_conf.get("lower_email", "yes") == "yes"
         salt_length = self.sys_conf.get("salt_length", 16)
-        by_id_col = self.sys_conf.get("by_id", None)
+        by_id_col = self.sys_conf.get("by_id", "uid")
 
         start_time = datetime.datetime.now()
         with self.open_target_file(filename, output_format) as fp:
