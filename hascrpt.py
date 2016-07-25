@@ -6,7 +6,7 @@ import base64
 import hashlib
 
 
-def hash_info(method, **kwargs):
+def hash_info(method, salt_length, **kwargs):
     """
 
     :param method:
@@ -14,9 +14,6 @@ def hash_info(method, **kwargs):
     :param kwargs:
     :return:
     """
-    salt_length = kwargs["salt_length"]
-    del kwargs["salt_length"]
-
     if method == "md5":
         return onetime_hash_hex("md5", **kwargs)
 

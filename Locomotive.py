@@ -156,8 +156,8 @@ class Locomotive(object):
                                           email, phone, password)
 
                             content = hascrpt.hash_info(hash_method,
-                                                        password=password,
                                                         salt_length=salt_length,
+                                                        password=password,
                                                         **fields)
                             content = _content_final_hook(content)
                             logging.debug("Content: %s", content)
