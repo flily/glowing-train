@@ -11,6 +11,8 @@ def hash_info(method, salt_length, **kwargs):
 
     :param method:
     :type method: str
+    :param salt_length:
+    :type salt_length:
     :param kwargs:
     :return:
     """
@@ -45,14 +47,12 @@ def hash_info(method, salt_length, **kwargs):
         return iterate_hash(hash_method, time=hash_times, **kwargs)
 
 
-def raw_dump(method, email, password, **kwargs):
-    return {
-        "email": email,
-        "password": {
-            "type": method,
-            "value": password.lower(),
-        }
+def raw_dump(method, password, **kwargs):
+    o = {
+        "password": get_password_object(method, password.lower()),
     }
+    o.update(kwargs)
+    return o
 
 
 def get_password_object(method, value, **kwargs):
