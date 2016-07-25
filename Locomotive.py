@@ -25,7 +25,11 @@ def _phone_map_hook(phone):
 
 
 def _username_map_hook(username):
-    return username
+    try:
+        return username.decode("utf8")
+
+    except UnicodeDecodeError:
+        return None
 
 
 def _content_final_hook(content):
