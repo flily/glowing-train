@@ -119,3 +119,28 @@ def iterate_hash(method, email, password, time, **kwargs):
         }
     }
 
+
+if __name__ == "__main__":
+    name_list = ["method", "password", "salt_length"]
+    test_cases = [
+        ("md5", "foobar"),
+        ("sha1", "foobar"),
+        ("sha224", "foobar"),
+        ("sha256", "foobar"),
+        ("sha384", "foobar"),
+        ("sha512", "foobar"),
+        ("md5-md5hex", "3858f62230ac3c915f300c664312c63f"),
+        ("salt-md5", "foobar"),
+        ("salt-md5", "foobar", 32),
+        ("salt-sha1", "foobar"),
+        ("salt-sha1", "foobar", 32),
+    ]
+
+    for x in test_cases:
+        input = dict(zip(name_list, x))
+        input["email"] = "demo@example.com"
+
+        tab = hash_info(**input)
+        got = tab["password"]["value"]
+        salt = tab["password"].get("salt", "")
+        print "[%s] '%s' -> %s (%s)" % (input["method"], input["password"], got, salt)
