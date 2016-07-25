@@ -5,6 +5,9 @@ import re
 
 
 def check_email(email):
+    if not email:
+        return None
+
     if "@" not in email:
         return None
 

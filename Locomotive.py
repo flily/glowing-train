@@ -24,6 +24,10 @@ def _phone_map_hook(phone):
     return phone
 
 
+def _username_map_hook(username):
+    return username
+
+
 def _content_final_hook(content):
     o = {}
     for key in content:
@@ -113,6 +117,7 @@ class Locomotive(object):
         hash_method = self.sys_conf.get("hash_method", "sha1")
         email_key = self.sys_conf.get("email_key", "email")
         phone_key = self.sys_conf.get("phone_key", "qq")
+        username_key = self.sys_conf.get("username_key", "username")
         password_key = self.sys_conf.get("password_key", "password")
         output_format = self.sys_conf.get("format", "bzip2")
         lower_email_only = self.sys_conf.get("lower_email", "yes") == "yes"
@@ -130,18 +135,19 @@ class Locomotive(object):
                         try:
                             email = row[column_map[email_key]]
                             phone = row[column_map[phone_key]]
+                            username = row[column_map[username_key]]
                             password = row[column_map[password_key]]
-                            if lower_email_only:
+
+                            if lower_email_only and email:
                                 email = email.lower()
 
                             email = checker.check_email(email)
-                            if not email:
-                                logging.error("ERROR EMAIL: %s", row)
-                                continue
+                            phone = checker.check_phone(phone)
 
                             fields = {
                                 "email": _email_map_hook(email),
                                 "phone": _phone_map_hook(phone),
+                                "username": _username_map_hook(username),
                             }
 
                             password = _password_map_hook(password)
