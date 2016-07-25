@@ -55,49 +55,55 @@ def raw_dump(method, email, password, **kwargs):
     }
 
 
-def onetime_hash_hex(method, email, password, **kwargs):
+def get_password_object(method, value, **kwargs):
+    o = {
+        "type": method,
+        "value": value,
+    }
+
+    if kwargs:
+        o.update(kwargs)
+
+    return o
+
+
+def onetime_hash_hex(method, password, **kwargs):
     m = hashlib.new(method)
     m.update(password)
     h = m.hexdigest()
 
-    return {
-        "email": email,
-        "password": {
-            "type": method,
-            "value": h,
-        }
+    o = {
+        "password": get_password_object(method, h),
     }
+    o.update(kwargs)
+    return o
 
 
-def hash_md5hex_hash(method, email, password, **kwargs):
+def hash_md5hex_hash(method, password, **kwargs):
     m = hashlib.new(method)
     m.update(password.lower())
     h = m.hexdigest()
 
-    return {
-        "email": email,
-        "password": {
-            "type": "%s-md5hex" % method,
-            "value": h,
-        }
+    o = {
+        "password": get_password_object("%s-md5hex" % method, h)
     }
+    o.update(kwargs)
+    return o
 
 
-def onetime_salt_hash_hex(method, email, password, salt_length=16, **kwargs):
+def onetime_salt_hash_hex(method, password, salt_length=16, **kwargs):
     salt = os.urandom(salt_length)
     m = hashlib.new(method)
     m.update(password)
     m.update(salt)
     h = m.hexdigest()
 
-    return {
-        "email": email,
-        "password": {
-            "type": method,
-            "value": h,
-            "salt": base64.b64encode(salt),
-        }
+    o = {
+        "password": get_password_object(method, h,
+                                        salt=base64.b64encode(salt)),
     }
+    o.update(kwargs)
+    return o
 
 
 def iterate_hash(method, email, password, time, **kwargs):
@@ -112,11 +118,8 @@ def iterate_hash(method, email, password, time, **kwargs):
 
     return {
         "email": email,
-        "password": {
-            "type": "multi-%s" % method,
-            "time": time,
-            "value": c,
-        }
+        "password": get_password_object("multi-%s" % method, c,
+                                        time=time)
     }
 
 
@@ -139,8 +142,10 @@ if __name__ == "__main__":
     for x in test_cases:
         input = dict(zip(name_list, x))
         input["email"] = "demo@example.com"
+        input["phone"] = "13800000000"
 
         tab = hash_info(**input)
+        print tab
         got = tab["password"]["value"]
         salt = tab["password"].get("salt", "")
         print "[%s] '%s' -> %s (%s)" % (input["method"], input["password"], got, salt)
