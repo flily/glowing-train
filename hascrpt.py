@@ -14,6 +14,9 @@ def hash_info(method, **kwargs):
     :param kwargs:
     :return:
     """
+    salt_length = kwargs["salt_length"]
+    del kwargs["salt_length"]
+
     if method == "md5":
         return onetime_hash_hex("md5", **kwargs)
 
@@ -36,7 +39,7 @@ def hash_info(method, **kwargs):
         return raw_dump(method[4:].lower(), **kwargs)
 
     elif method.startswith("salt-"):
-        return onetime_salt_hash_hex(method[5:], **kwargs)
+        return onetime_salt_hash_hex(method[5:], salt_length=salt_length, **kwargs)
 
     elif method.startswith("multi-"):
         parts = method.split("-")
